@@ -1,0 +1,37 @@
+[
+  {
+    "id": "perf-degrading",
+    "query": "Why is server performance degrading?",
+    "expected_tools": ["get_cpu_metrics", "get_memory_metrics"],
+    "required_checks": ["facts_present", "confidence_present", "recommendations_present", "no_fabricated_metrics"],
+    "description": "Performance degradation should gather resource metrics and return grounded response"
+  },
+  {
+    "id": "database-issues",
+    "query": "Is the database causing issues?",
+    "expected_tools": ["check_database"],
+    "required_checks": ["facts_present", "tool_selection_correct", "grounded_in_observations"],
+    "description": "Database query should select database tool and ground response in observations"
+  },
+  {
+    "id": "memory-check",
+    "query": "What is the current memory usage?",
+    "expected_tools": ["get_memory_metrics"],
+    "required_checks": ["facts_present", "tool_selection_correct", "no_fabricated_metrics"],
+    "description": "Memory query should use memory tool only"
+  },
+  {
+    "id": "log-errors",
+    "query": "Are there any errors in the application logs?",
+    "expected_tools": ["analyze_logs"],
+    "required_checks": ["facts_present", "confidence_present"],
+    "description": "Log query should attempt log analysis when paths configured"
+  },
+  {
+    "id": "overall-health",
+    "query": "Give me an overall health status check",
+    "expected_tools": ["get_cpu_metrics", "get_memory_metrics", "check_database"],
+    "required_checks": ["facts_present", "recommendations_present", "response_complete"],
+    "description": "Health check should be comprehensive"
+  }
+]
