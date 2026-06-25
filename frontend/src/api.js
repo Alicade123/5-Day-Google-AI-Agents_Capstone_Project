@@ -1,9 +1,18 @@
 const API_BASE = import.meta.env.VITE_API_URL || "/api";
+const API_KEY = import.meta.env.VITE_API_KEY || "";
+
+function buildHeaders(extra = {}) {
+  const headers = { "Content-Type": "application/json", ...extra };
+  if (API_KEY) {
+    headers["X-API-Key"] = API_KEY;
+  }
+  return headers;
+}
 
 export async function fetchJSON(path, options = {}) {
   const response = await fetch(`${API_BASE}${path}`, {
-    headers: { "Content-Type": "application/json", ...options.headers },
     ...options,
+    headers: buildHeaders(options.headers),
   });
   if (!response.ok) {
     throw new Error(`API error ${response.status}: ${path}`);

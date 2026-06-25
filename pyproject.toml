@@ -17,6 +17,7 @@ dependencies = [
     "python-dotenv>=1.0.0",
     "aiosqlite>=0.20.0",
     "pyyaml>=6.0.0",
+    "mcp>=1.28.0",
 ]
 
 [project.optional-dependencies]
@@ -25,6 +26,10 @@ dev = [
     "pytest-asyncio>=0.24.0",
     "pytest-cov>=6.0.0",
     "httpx>=0.28.0",
+]
+submission = [
+    "playwright>=1.49.0",
+    "pillow>=11.0.0",
 ]
 
 [build-system]
