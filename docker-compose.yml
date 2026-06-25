@@ -1,0 +1,60 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: server-health-backend
+    ports:
+      - "${BACKEND_PORT:-8000}:8000"
+    environment:
+      APP_NAME: ${APP_NAME:-server-health-agent}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      DATABASE_URL: ${DATABASE_URL:-sqlite+aiosqlite:///./data/incidents.db}
+      GOOGLE_API_KEY: ${GOOGLE_API_KEY:-}
+      GOOGLE_CLOUD_PROJECT: ${GOOGLE_CLOUD_PROJECT:-}
+      GOOGLE_CLOUD_LOCATION: ${GOOGLE_CLOUD_LOCATION:-us-central1}
+      HTTP_HEALTH_URLS: ${HTTP_HEALTH_URLS:-http://localhost:8000/health}
+      PING_HOSTS: ${PING_HOSTS:-8.8.8.8,1.1.1.1}
+      MONITORED_PORTS: ${MONITORED_PORTS:-80,443,8000}
+      MONITORED_SERVICES: ${MONITORED_SERVICES:-}
+      LOG_PATHS: ${LOG_PATHS:-}
+      CPU_WARNING_PERCENT: ${CPU_WARNING_PERCENT:-80}
+      CPU_CRITICAL_PERCENT: ${CPU_CRITICAL_PERCENT:-95}
+      MEMORY_WARNING_PERCENT: ${MEMORY_WARNING_PERCENT:-85}
+      MEMORY_CRITICAL_PERCENT: ${MEMORY_CRITICAL_PERCENT:-95}
+      DISK_WARNING_PERCENT: ${DISK_WARNING_PERCENT:-80}
+      DISK_CRITICAL_PERCENT: ${DISK_CRITICAL_PERCENT:-90}
+      API_KEY: ${API_KEY:-}
+      RATE_LIMIT_PER_MINUTE: ${RATE_LIMIT_PER_MINUTE:-60}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:5173,http://localhost:3000}
+    volumes:
+      - sqlite_data:/app/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:8000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: server-health-frontend
+    ports:
+      - "${FRONTEND_PORT:-5173}:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
+
+volumes:
+  sqlite_data:
+    driver: local
