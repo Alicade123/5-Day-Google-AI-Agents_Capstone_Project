@@ -112,7 +112,7 @@ cp .env.example .env
 docker compose up --build
 ```
 
-| Service | URL |
+| Service | URL(s) |
 |---------|-----|
 | Dashboard | http://localhost:5173 |
 | API | http://localhost:8000 |
